@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: ansibleforms
+  namespace: {{ .Values.namespace }}
   name: mysql
   labels:
     app.kubernetes.io/name: mysql
@@ -24,7 +24,7 @@ spec:
         app.kubernetes.io/part-of: ansibleforms
     spec:
       containers:
-        - image: mysql:5.7
+        - image: {{ .Values.mysql.image }}
           name: mysql
           ports:
             - containerPort: 3306

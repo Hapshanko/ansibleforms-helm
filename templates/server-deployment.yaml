@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: server
-  namespace: ansibleforms
+  namespace: {{ .Values.namespace }}
   labels:
     app.kubernetes.io/name: server
     app.kubernetes.io/instance: server
@@ -24,7 +24,7 @@ spec:
         app.kubernetes.io/part-of: ansibleforms
     spec:
       containers:
-        - image: ansibleguy/ansibleforms:latest
+        - image: {{ .Values.server.image }}
           name: server
           ports:
             - containerPort: 8443
