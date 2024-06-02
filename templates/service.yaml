@@ -6,7 +6,7 @@ metadata:
   labels:
     app.kubernetes.io/name: server
     app.kubernetes.io/instance: server
-    app.kubernetes.io/component: server
+    app.kubernetes.io/component: serverh
     app.kubernetes.io/part-of: ansibleforms
 spec:
   type: LoadBalancer

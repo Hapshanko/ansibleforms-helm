@@ -1,8 +1,25 @@
 namespace: ansibleforms
 
-server:
-  image: ansibleguy/ansibleforms:latest
+config: 
+  # Configure log level for the application. Options are:
+  # "error", "warn", "notice", "info", "debug"
+  # logging:
+  #   stdout: debug
+  #   file: notice
 
+server:
+  image: 
+    repository: ansibleguy/ansibleforms
+    tag: latest
+  tls:
+    certSource: 
 
 mysql:
-  image: mysql:5.7
+  image:
+    repository: mysql
+    tag: 5.7
+  # To change them - convert the new creds to base64 E.g: echo -n 'myuser' | base64
+  db_username: cm9vdA== #(root)
+  db_password: QW5zaWJsZUZvcm1zITEyMw== # AnsibleForms!123
+  # 
+  existingSecret: 
