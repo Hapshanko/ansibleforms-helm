@@ -4,10 +4,7 @@ metadata:
   name: server
   namespace: {{ .Values.namespace }}
   labels:
-    app.kubernetes.io/name: server
-    app.kubernetes.io/instance: server
-    app.kubernetes.io/component: server
-    app.kubernetes.io/part-of: ansibleforms
+      {{- include "mysql.labels" . | indent 4}}
 spec:
   replicas: 1
   selector:
@@ -18,13 +15,10 @@ spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: server
-        app.kubernetes.io/instance: server
-        app.kubernetes.io/component: server
-        app.kubernetes.io/part-of: ansibleforms
+          {{- include "server.labels" . | indent 4}}
     spec:
       containers:
-        - image: {{ .Values.server.image }}
+        - image: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Chart.AppVersion }}"
           name: server
           ports:
             - containerPort: 8443

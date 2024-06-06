@@ -4,10 +4,7 @@ metadata:
   namespace: {{ .Values.namespace }}
   name: ansibleforms-server-pv-claim
   labels:
-    app.kubernetes.io/name: server
-    app.kubernetes.io/instance: server
-    app.kubernetes.io/component: server
-    app.kubernetes.io/part-of: ansibleforms
+    {{- include "mysql.labels" . | indent 4}}
 spec:
   accessModes:
     - ReadWriteOnce

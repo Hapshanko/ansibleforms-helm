@@ -1,25 +1,65 @@
+## TODO add custom CA ot truse
+## TODO add ingress
 namespace: ansibleforms
+
+server:
+  image: 
+    repository: ansibleguy/ansibleforms
+    tag: 5.0.1
+  labels:
+    app.kubernetes.io/name: server
+    app.kubernetes.io/instance: server
+    app.kubernetes.io/component: server
+    app.kubernetes.io/part-of: ansibleforms
+  tls:
+    # The source of the server certificate for TLS connections.
+    # Can be either "secret", "plaintext" or "auto". uncomment the wanted option.
+    certSource: auto
+    secret: 
+      # The name of the secret. keys must be:
+      # "tls.crt" - the certificate
+      # "tls.key" - the private key
+      secretName: ""
+    plaintext:
+      # Your certificate data. should be in base64 or pem format.
+      certificate: |
+
+      # Private key of your certificate
+      privateKey: | 
+
+mysql:
+  image:
+    repository: mysql
+    tag: 5.7
+  labels:
+    app.kubernetes.io/name: mysql
+    app.kubernetes.io/instance: mysql
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: ansibleforms
+  # To change them - convert the new creds to base64 E.g: echo -n 'myuser' | base64
+  db_username: cm9vdA== #(root)
+  db_password: QW5zaWJsZUZvcm1zITEyMw== # AnsibleForms!123
+  # 
+  existingSecret: asas
+
+expose:
+  # Choose the service type to expose the application. Options are:
+  # 1) "ingress" - for external tls access. requires ingress controller
+  #     configured on your cluster.
+  # 2) "loadBalancer" - an external LoadBalancer. has to be available in your 
+  #     infrestructure provider.
+  # 3) "NodePort" - external access using the machine's port. least recommended
+  #      method, use it only if all of the other are not available
+  # You can read about the differnt services types to match your needs the best
+  # https://platform9.com/blog/understanding-kubernetes-loadbalancer-vs-nodeport-vs-ingress/
+  type: ingress 
+  loadBalancer: 
+    port:
+
 
 config: 
   # Configure log level for the application. Options are:
   # "error", "warn", "notice", "info", "debug"
   # logging:
   #   stdout: debug
-  #   file: notice
-
-server:
-  image: 
-    repository: ansibleguy/ansibleforms
-    tag: latest
-  tls:
-    certSource: 
-
-mysql:
-  image:
-    repository: mysql
-    tag: 5.7
-  # To change them - convert the new creds to base64 E.g: echo -n 'myuser' | base64
-  db_username: cm9vdA== #(root)
-  db_password: QW5zaWJsZUZvcm1zITEyMw== # AnsibleForms!123
-  # 
-  existingSecret: 
+  #   file: notice  
