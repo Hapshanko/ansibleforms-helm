@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/component: server
     app.kubernetes.io/part-of: ansibleforms
 data:
-  LOG_CONSOLE_LEVEL: debug
-  LOG_LEVEL: debug
-  MYSQL_DATABASE: "AnsibleForms"
-  NODE_ENV: "production"
+  LOG_CONSOLE_LEVEL: {{ .Values.log_console_level | default "debug" }}
+  LOG_LEVEL: {{ .Values.log_console_level | default "info" }}
+  MYSQL_DATABASE: {{ .Values.mysql_database | default "AnsibleForms" }}
+  NODE_ENV: {{ .Values.environment | default "production" }}

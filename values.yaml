@@ -1,5 +1,7 @@
-## TODO add custom CA ot truse
+## TODO add custom CA of trust
 ## TODO add ingress
+## TODO add resources requests & limits
+## TODO change server certificates to secret + add custom
 namespace: ansibleforms
 
 server:
@@ -20,7 +22,7 @@ server:
       # "tls.crt" - the certificate
       # "tls.key" - the private key
       secretName: ""
-    plaintext:
+      plaintext:
       # Your certificate data. should be in base64 or pem format.
       certificate: |
 
@@ -56,10 +58,14 @@ expose:
   loadBalancer: 
     port:
 
+## General configurations for app costumization
 
-config: 
-  # Configure log level for the application. Options are:
-  # "error", "warn", "notice", "info", "debug"
-  # logging:
-  #   stdout: debug
-  #   file: notice  
+# Nodejs environment. can be either "production" or  "development"
+environment: production
+# Enable or disable the internal designer. Not reccommended, best practice is to take your forms from SCM
+enableDesigner: true 
+# Logging level. Options are "error", "warn", "notice", "info" and "debug"
+log_level: info
+console_log_level: debug
+# Name of mysql database
+mysql_database: AnsibleForms

@@ -4,7 +4,7 @@ metadata:
   name: server
   namespace: {{ .Values.namespace }}
   labels:
-      {{- include "mysql.labels" . | indent 4}}
+      {{- include "server.labels" . | indent 4}}
 spec:
   replicas: 1
   selector:
@@ -15,10 +15,10 @@ spec:
   template:
     metadata:
       labels:
-          {{- include "server.labels" . | indent 4}}
+          {{- include "server.labels" . | indent 8}}
     spec:
       containers:
-        - image: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Chart.AppVersion }}"
+        - image: {{ template "server.image" .}}
           name: server
           ports:
             - containerPort: 8443

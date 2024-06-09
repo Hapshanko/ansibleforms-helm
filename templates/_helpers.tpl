@@ -15,3 +15,7 @@ Define all server (app) labels with iteration, for elegant use in templates
 {{ $key }}: {{ $val }}
 {{- end }}
 {{- end }}
+
+{{- define  "server.image" }}
+{{- printf "%s:%s" .Values.server.image.repository (.Values.server.image.tag | default .Chart.AppVersion) }}
+{{- end}}
