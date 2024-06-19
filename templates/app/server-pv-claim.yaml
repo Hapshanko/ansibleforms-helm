@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.namespace }}
   name: ansibleforms-server-pv-claim
   labels: {{ include "mysql.labels" . | nindent 4 }}
 spec:

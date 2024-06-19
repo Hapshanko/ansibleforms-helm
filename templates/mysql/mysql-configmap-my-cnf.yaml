@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mysql-my-cnf
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.namespace }}
   labels: {{- include "mysql.labels" . | nindent 4 }}
 data:
   my.cnf: |
