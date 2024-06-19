@@ -18,6 +18,8 @@ spec:
       containers:
         - image: {{ template "mysql.image" . }}
           name: mysql
+          args:
+            - "--ignore-db-dir=lost+found" # To avoid a common error with mysql 5.7 and k8s
           ports:
             - containerPort: 3306
           env:

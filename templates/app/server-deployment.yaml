@@ -65,12 +65,21 @@ spec:
             - mountPath: /app/dist/persistent
               name: server-persistent-storage
             - name: server-certificates
-              mountPath: /app/dist/persistent/certificates/
+              mountPath: /app/dist/persistent/certificates/cert.pem
+              subPath: cert.pem
+            - name: server-certificates
+              mountPath:  /app/dist/persistent/certificates/key.pem
+              subPath: key.pem
       restartPolicy: Always
       volumes:
         - name: server-persistent-storage
           persistentVolumeClaim:
             claimName: ansibleforms-server-pv-claim
         - name: server-certificates
-          secret:
-            secretName: server-certificates
+          configMap:
+            name: server-certificates
+            items:
+            - key: cert.pem
+              path: cert.pem
+            - key: key.pem
+              path: key.pem

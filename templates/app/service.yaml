@@ -10,7 +10,7 @@ spec:
 {{- else if eq .Values.expose.type "nodePort" }}
   type: NodePort
 {{- else if eq .Values.expose.type "ingress"}}
-  type: clusterIP
+  type: ClusterIP
 {{- end }}
   ports:
     - name: server

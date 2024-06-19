@@ -6,7 +6,7 @@ metadata:
   name: ansibleforms
 spec:
   tls:
-    hosts:
+  - hosts:
       - {{ .Values.expose.hostname | quote }}
     secretName: server-certificates
   rules:
@@ -14,7 +14,7 @@ spec:
     http:
       paths:
       - path: {{ template "baseURL" . }}
-        pathTyspe: Prefix
+        pathType: Prefix
         backend:
           service:
             name: server
