@@ -3,12 +3,10 @@ kind: PersistentVolumeClaim
 metadata:
   namespace: {{ .Values.namespace }}
   name: ansibleforms-server-pv-claim
-  labels:
-    {{- include "mysql.labels" . | indent 4}}
+  labels: {{ include "mysql.labels" . | nindent 4 }}
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 100Mi
-status: {}

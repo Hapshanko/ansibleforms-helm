@@ -1,7 +1,10 @@
 ## TODO add custom CA of trust
 ## TODO add ingress
 ## TODO add resources requests & limits
-## TODO change server certificates to secret + add custom
+## TODO change server certificates to secret + DB info
+## TODO - add replicas? scalable?
+## TODO think about labels. static?
+## Validation for strings (such as expose.type)
 namespace: ansibleforms
 
 server:
@@ -13,26 +16,13 @@ server:
     app.kubernetes.io/instance: server
     app.kubernetes.io/component: server
     app.kubernetes.io/part-of: ansibleforms
-  tls:
-    # The source of the server certificate for TLS connections.
-    # Can be either "secret", "plaintext" or "auto". uncomment the wanted option.
-    certSource: auto
-    secret: 
-      # The name of the secret. keys must be:
-      # "tls.crt" - the certificate
-      # "tls.key" - the private key
-      secretName: ""
-      plaintext:
-      # Your certificate data. should be in base64 or pem format.
-      certificate: |
+  port: 8443
 
-      # Private key of your certificate
-      privateKey: | 
-
+# App must work with an SQL database
 mysql:
   image:
     repository: mysql
-    tag: 5.7
+    tag: "5.7"
   labels:
     app.kubernetes.io/name: mysql
     app.kubernetes.io/instance: mysql
@@ -50,22 +40,43 @@ expose:
   #     configured on your cluster.
   # 2) "loadBalancer" - an external LoadBalancer. has to be available in your 
   #     infrestructure provider.
-  # 3) "NodePort" - external access using the machine's port. least recommended
+  # 3) "nodePort" - external access using the machine's port. least recommended
   #      method, use it only if all of the other are not available
   # You can read about the differnt services types to match your needs the best
   # https://platform9.com/blog/understanding-kubernetes-loadbalancer-vs-nodeport-vs-ingress/
-  type: ingress 
+  type: ingress
   loadBalancer: 
     port:
+  hostname: ansibleforms.apps.ocp410-dev.cloudlet-dev.com
+
+tls:
+  # Enable or disable HTTPS to the application. Must be true of false - boolean
+  enable: true
+  # The source of the server certificate for TLS connections.
+  # Can be either "secret", "plaintext"
+  certSource: plaintext
+  # The name of the secret, if using secret. keys must be:
+  # "cert.pem" - the certificate
+  # "key.pem" - the private key
+  # Content must be in pem format
+  # secretName: ""
+  plaintext:
+    # Your certificate data. should be in base64 or pem format.
+    certificate: |
+
+    # Private key of your certificate
+    privateKey: | 
 
 ## General configurations for app costumization
+## Uncomment wanted values
 
-# Nodejs environment. can be either "production" or  "development"
+# # Nodejs environment. can be either "production" or "development"
 environment: production
 # Enable or disable the internal designer. Not reccommended, best practice is to take your forms from SCM
 enableDesigner: true 
 # Logging level. Options are "error", "warn", "notice", "info" and "debug"
-log_level: info
-console_log_level: debug
-# Name of mysql database
-mysql_database: AnsibleForms
+logLevel: info
+consoleLogLevel: debug
+# # Name of mysql database
+mysqlDatabase: AnsibleForms
+baseURL: "/"

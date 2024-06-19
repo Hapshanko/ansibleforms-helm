@@ -3,8 +3,7 @@ kind: Deployment
 metadata:
   namespace: {{ .Values.namespace }}
   name: mysql
-  labels: 
-    {{- include "mysql.labels" . | indent 4}}
+  labels: {{ include "mysql.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
@@ -14,11 +13,10 @@ spec:
     type: Recreate
   template:
     metadata:
-      labels:
-        {{- include "mysql.labels" . | indent 8}}
+      labels: {{ include "mysql.labels" . | nindent 8 }}
     spec:
       containers:
-        - image: {{ .Values.mysql.image }}
+        - image: {{ template "mysql.image" . }}
           name: mysql
           ports:
             - containerPort: 3306
@@ -57,4 +55,3 @@ spec:
             items:
             - key: my.cnf
               path: my.cnf
-status: {}

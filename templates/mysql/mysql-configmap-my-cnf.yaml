@@ -3,8 +3,7 @@ kind: ConfigMap
 metadata:
   name: mysql-my-cnf
   namespace: {{ .Values.namespace }}
-  labels:
-    {{- include "mysql.labels" . | indent 4}}
+  labels: {{- include "mysql.labels" . | nindent 4 }}
 data:
   my.cnf: |
     [mysqld]

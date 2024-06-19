@@ -3,16 +3,17 @@ kind: Service
 metadata:
   namespace: {{ .Values.namespace }}
   name: server
-  labels:
-    {{- include "server.labels" . | indent 4}}
+  labels: {{ include "server.labels" . | nindent 4 }}
 spec:
+{{- if eq .Values.expose.type "loadBalancer" }}
   type: LoadBalancer
+{{- else if eq .Values.expose.type "nodePort" }}
+  type: NodePort
+{{- else if eq .Values.expose.type "ingress"}}
+  type: clusterIP
+{{- end }}
   ports:
-    - name: "8443"
+    - name: server
       port: 8445
       targetPort: 8443
-  selector:
-    app.kubernetes.io/name: server
-    app.kubernetes.io/instance: server
-status:
-  loadBalancer: {}
+  selector: {{ include "server.labels" . | nindent 4 }}  

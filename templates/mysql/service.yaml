@@ -4,8 +4,7 @@ kind: Service
 metadata:
   namespace: {{ .Values.namespace }}
   name: mysql
-  labels:
-    {{- include "mysql.labels" . | indent 4}}
+  labels: {{ include "mysql.labels" . | nindent 4 }}
 spec:
   ports:
     - name: "3306"

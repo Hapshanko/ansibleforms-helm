@@ -1,0 +1,23 @@
+{{ if eq .Values.expose.type "ingress"}}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ansibleforms
+spec:
+  tls:
+    hosts:
+      - {{ .Values.expose.hostname | quote }}
+    secretName: server-certificates
+  rules:
+  - host: {{ .Values.expose.hostname }}
+    http:
+      paths:
+      - path: {{ template "baseURL" . }}
+        pathTyspe: Prefix
+        backend:
+          service:
+            name: server
+            port:
+              number: {{ .Values.server.port }}
+{{- end }}

@@ -3,8 +3,7 @@ kind: Deployment
 metadata:
   name: server
   namespace: {{ .Values.namespace }}
-  labels:
-      {{- include "server.labels" . | indent 4}}
+  labels: {{ include "server.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
@@ -14,11 +13,10 @@ spec:
     type: Recreate
   template:
     metadata:
-      labels:
-          {{- include "server.labels" . | indent 8}}
+      labels: {{ include "server.labels" . | nindent 8 }}
     spec:
       containers:
-        - image: {{ template "server.image" .}}
+        - image: {{ template "server.image" . }}
           name: server
           ports:
             - containerPort: 8443
@@ -29,6 +27,11 @@ spec:
               value: mysql
             - name: DB_PORT
               value: "3306"
+            - name: HTTPS
+              valueFrom:
+                configMapKeyRef:
+                  key: HTTPS
+                  name: ansibleforms-env              
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
@@ -39,8 +42,6 @@ spec:
                 secretKeyRef:
                   name: ansibleforms-secrets
                   key: DB_PASSWORD
-            - name: HTTPS
-              value: "1"
             - name: LOG_CONSOLE_LEVEL
               valueFrom:
                 configMapKeyRef:
@@ -64,22 +65,12 @@ spec:
             - mountPath: /app/dist/persistent
               name: server-persistent-storage
             - name: server-certificates
-              mountPath: /app/dist/persistent/certificates/cert.pem
-              subPath: cert.pem
-            - name: server-certificates
-              mountPath:  /app/dist/persistent/certificates/key.pem
-              subPath: key.pem
+              mountPath: /app/dist/persistent/certificates/
       restartPolicy: Always
       volumes:
         - name: server-persistent-storage
           persistentVolumeClaim:
             claimName: ansibleforms-server-pv-claim
         - name: server-certificates
-          configMap:
-            name: server-certificates
-            items:
-            - key: cert.pem
-              path: cert.pem
-            - key: key.pem
-              path: key.pem
-status: {}
+          secret:
+            secretName: server-certificates

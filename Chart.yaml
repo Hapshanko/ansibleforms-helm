@@ -1,6 +1,6 @@
 apiVersion: v2
 name: ansibleforms
-description: Extra functionality GUI for Ansible 
+description: Extra functionality GUI for Ansible
 
 # A chart can be either an 'application' or a 'library' chart.
 #
