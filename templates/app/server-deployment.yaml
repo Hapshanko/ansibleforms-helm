@@ -36,12 +36,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: ansibleforms-secrets
-                  key: DB_USER
+                  key: db_user
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: ansibleforms-secrets
-                  key: DB_PASSWORD
+                  key: db_password
             - name: LOG_CONSOLE_LEVEL
               valueFrom:
                 configMapKeyRef:
@@ -65,21 +65,16 @@ spec:
             - mountPath: /app/dist/persistent
               name: server-persistent-storage
             - name: server-certificates
+              subPath: tls.cert
               mountPath: /app/dist/persistent/certificates/cert.pem
-              subPath: cert.pem
             - name: server-certificates
               mountPath:  /app/dist/persistent/certificates/key.pem
-              subPath: key.pem
+              subPath: tls.key
       restartPolicy: Always
       volumes:
         - name: server-persistent-storage
           persistentVolumeClaim:
             claimName: ansibleforms-server-pv-claim
         - name: server-certificates
-          configMap:
-            name: server-certificates
-            items:
-            - key: cert.pem
-              path: cert.pem
-            - key: key.pem
-              path: key.pem
+          secret:
+            secretName: server-certificates

@@ -18,7 +18,7 @@ server:
     app.kubernetes.io/part-of: ansibleforms
   port: 8443
 
-# App must work with an SQL database
+# App must work with a MySQL database
 mysql:
   image:
     repository: mysql
@@ -28,11 +28,18 @@ mysql:
     app.kubernetes.io/instance: mysql
     app.kubernetes.io/component: database
     app.kubernetes.io/part-of: ansibleforms
-  # To change them - convert the new creds to base64 E.g: echo -n 'myuser' | base64
-  db_username: cm9vdA== #(root)
-  db_password: QW5zaWJsZUZvcm1zITEyMw== # AnsibleForms!123
-  # 
-  existingSecret: asas
+  credentials:
+    # Database credentials source. Can be either "plaintext" or "secret"
+    # For both of the sources more configuration is required.
+    source: "plaintext"
+    # If credentials source is "plaintext", configure username and password below.
+    db_username: root
+    db_password: AnsibleForms!123 
+    # If credetials source is "secret", write your secret name below.
+    # Secret *must* have the following keys
+    # 1) db_user - with the DB username
+    # 2) db_password - with mysql password
+    secretName: ""
 
 expose:
   # Choose the service type to expose the application. Options are:
@@ -55,17 +62,103 @@ tls:
   # The source of the server certificate for TLS connections.
   # Can be either "secret", "plaintext"
   certSource: plaintext
-  # The name of the secret, if using secret. keys must be:
-  # "cert.pem" - the certificate
-  # "key.pem" - the private key
+  # If using secret, the name of the secret. Keys *must* be:
+  # "cert.pem" - your certificate data
+  # "key.pem" - your private key
   # Content must be in pem format
-  # secretName: ""
+  secretName: ""
   plaintext:
-    # Your certificate data. should be in base64 or pem format.
-    certificate: |
-
-    # Private key of your certificate
-    privateKey: | 
+    # Your certificate data. should be in pem format.
+    certificate: |-
+      -----BEGIN CERTIFICATE-----
+      MIIGHzCCBAegAwIBAgIUFab+HqxFeUbvAiWbdrkm7Dbf9RYwDQYJKoZIhvcNAQEL
+      BQAwgZ4xCzAJBgNVBAYTAkVFMQ4wDAYDVQQIDAVOaXNpbTEMMAoGA1UEBwwDTW9t
+      MQ4wDAYDVQQKDAVCcmlueDENMAsGA1UECwwEV2hhdDE2MDQGA1UEAwwtYW5zaWJs
+      ZWZvcm1zLmFwcHMub2NwNDEwLWRldi5jbG91ZGxldC1kZXYuY29tMRowGAYJKoZI
+      hvcNAQkBFgtib3BAYmFwLmJpcDAeFw0yNDA2MjQxNDE1MjNaFw0yNTA2MjQxNDE1
+      MjNaMIGeMQswCQYDVQQGEwJFRTEOMAwGA1UECAwFTmlzaW0xDDAKBgNVBAcMA01v
+      bTEOMAwGA1UECgwFQnJpbngxDTALBgNVBAsMBFdoYXQxNjA0BgNVBAMMLWFuc2li
+      bGVmb3Jtcy5hcHBzLm9jcDQxMC1kZXYuY2xvdWRsZXQtZGV2LmNvbTEaMBgGCSqG
+      SIb3DQEJARYLYm9wQGJhcC5iaXAwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIK
+      AoICAQCkK1a7wYDRapEX8ZigAg8Il5u6yniHsI9EsFYc6UF9Ayd9zufBspAeveAC
+      ZbPa3wlcR1D1yarV4+o/YQ8Zrlej4RNZNU61CC0umyPByJIL+1OvNBvFIfM1yPti
+      TnRO6Ir0DkeCNIMpJ23zeXrdZ2njxgJsl7I/uPjyTuSH1YJGmIuOnFka7P/U2Q3j
+      7aNrZgJighvM3gO2lk9Y5A7W5WB7kWKlP2LC7qJLVgvIn/aq5riT6riwn4EXsyXL
+      4BarUY5J9AE/mmXh9AI50Fz9jBwE8M4NtiYDgzFKtCTKcViE1IVG4VIyC98EmPaX
+      6wcRpaEp1/l97a04OLYPSbEmckwJ/DV2Z68MacZEPgxztpRrGVblUTqEsmGAlzZk
+      2bv9fGuUFo0SqIQ71TpqkaKrMhcQNp4ZHk06qJKqaiWWgl3VlSs4YkKX4y6WzOdV
+      Nu9HCCX3DIB3+SPiw3Jm16blf42xfXGLP3ICpX83OLv13cAowG02m7LwP0naC4ll
+      9+9tfgstKavi2JcJcC2rDMYHnnupYt73HiuEWO/qdT8JVepxDOOwxjxm7QzsGtKC
+      dxu9ixhiuf252ik/2ucjzDHzExRjdbaawgTHumdamfYfdnRedHeQGTQdUy+DGkEd
+      T3mCdHXUjYkxnJzI9BupwLEBnafKYxmi1H+Rl55S0vUvCmapqwIDAQABo1MwUTAd
+      BgNVHQ4EFgQU8XDHXBVCSRRD1IS5moniOfPMykYwHwYDVR0jBBgwFoAU8XDHXBVC
+      SRRD1IS5moniOfPMykYwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOC
+      AgEANMIV0/IHbWX8jL/1ANt4IlPAWE71PikGFKA8Z/4r4jSby7dFyu5zgOEArW/6
+      fry4/bf8vQOzWV8qoTGWrIoBWtG9gPWq9OV8mz8+vIB/UTpvG2XXfFAZMC0el89c
+      /X6AQ5U+4bCekbC+GUJxn2VnbrpOan1mrovESWbFTeMUswOqdid8L3dWD+B3M0bJ
+      41owo1lolOdSB5YTaFW9gy17PCNl2txSgkCc3/2GQsCvgigzSyGMXLlSNv2kLNC4
+      ur3dckikFvUtxuiYVl4u1uAO3l9e3Jo3MGNOUxTilxRqwi1melpJebXOuhcS1v6+
+      B5h1Xow9U7zBeA99pg3UGGU8NRQji6dyGI/JAXr/0ANHY2H+sudGy9dgjDGUQvIs
+      GO7DAYuhs865umBygrA8Mc8FPWyl12/KHn11hG5G3smqtScQgEAvI8jXqSAIg/wv
+      mi9tSKff3MOid7U+jyhI3MKeD/T+ZXD2zhRi2wj3qJ/QNmOsHQ+J9fcxbAQECL9t
+      rDo9oHzY4Y1HrybmB5/IS+QXixrlTjIHrMATM2pb0k4oNIhmnX17lnCPemQj4knJ
+      ZtmDrK091HwFaZ0O5pyaLuIQTzSO9cexPbEhhymnpXxq+daNjpcKNH4Frf9Upfpo
+      uDgOS4p+C1zQ+bY+EJrFJvlbtXe2y7+jECCFhIsA4FO82AE=
+      -----END CERTIFICATE-----
+    # Private key of your certificate (pem format)
+    privateKey: |- 
+      -----BEGIN PRIVATE KEY-----
+      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
+      xnF8ZVaXCQC3dCYLP8DV5XXtRKZz
+      -----END PRIVATE KEY-----
 
 ## General configurations for app costumization
 ## Uncomment wanted values

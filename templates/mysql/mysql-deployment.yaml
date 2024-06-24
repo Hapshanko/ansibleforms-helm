@@ -27,7 +27,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: ansibleforms-secrets
-                  key: DB_PASSWORD
+                  key: db_password
             - name: MYSQL_DATABASE
               valueFrom:
                 configMapKeyRef:
