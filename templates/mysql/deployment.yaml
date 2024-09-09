@@ -3,23 +3,25 @@ kind: Deployment
 metadata:
   namespace: {{ .Release.namespace }}
   name: mysql
-  labels: {{ include "mysql.labels" . | nindent 4 }}
+  labels:
+    {{- include "mysql.labels" . | indent 4 }}
+    {{- include "commonLabels" . | indent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: mysql
+      {{- include "mysql.labels" . | indent 4 }}
   strategy:
     type: Recreate
   template:
     metadata:
-      labels: {{ include "mysql.labels" . | nindent 8 }}
+      labels:
+        {{- include "mysql.labels" . | indent 4 }}
+        {{- include "commonLabels" . | indent 4 }}      
     spec:
       containers:
         - image: {{ template "mysql.image" . }}
           name: mysql
-          args:
-            - "--ignore-db-dir=lost+found" # To avoid a common error with mysql 5.7 and k8s
           ports:
             - containerPort: 3306
           env:

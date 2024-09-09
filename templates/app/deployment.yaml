@@ -3,17 +3,21 @@ kind: Deployment
 metadata:
   name: server
   namespace: {{ .Release.namespace }}
-  labels: {{ include "server.labels" . | nindent 4 }}
+  labels:
+    {{- include "server.labels" . | indent 4 }}
+    {{- include "commonLables" . | indent 4 }}  
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: server
+    {{- include "server.labels" . | indent 4 }}
   strategy:
     type: Recreate
   template:
     metadata:
-      labels: {{ include "server.labels" . | nindent 8 }}
+      labels:
+        {{- include "server.labels" . | indent 4 }}
+        {{- include "commonLables" . | indent 4 }}      
     spec:
       containers:
         - image: {{ template "server.image" . }}
@@ -27,20 +31,17 @@ spec:
               value: mysql
             - name: DB_PORT
               value: "3306"
+            - name: DB_USER
+              value: "root"              
             - name: HTTPS
               valueFrom:
                 configMapKeyRef:
                   key: HTTPS
                   name: ansibleforms-env              
-            - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: ansibleforms-secrets
-                  key: db_user
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: ansibleforms-secrets
+                  name: {{ template "databaseSecretName" . }}
                   key: db_password
             - name: LOG_CONSOLE_LEVEL
               valueFrom:
@@ -77,4 +78,4 @@ spec:
             claimName: ansibleforms-server-pv-claim
         - name: server-certificates
           secret:
-            secretName: server-certificates
+            secretName: {{ template "certificateSecretName" . }}

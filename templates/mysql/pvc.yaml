@@ -3,7 +3,9 @@ kind: PersistentVolumeClaim
 metadata:
   namespace: {{ .Release.namespace }}
   name: ansibleforms-mysql-pv-claim
-  labels: {{ include "mysql.labels" . | nindent 4 }}
+  labels:
+    {{- include "mysql.labels" . | indent 4 }}
+    {{- include "commonLabels" . | indent 4 }}  
 spec:
   accessModes:
     - ReadWriteOnce

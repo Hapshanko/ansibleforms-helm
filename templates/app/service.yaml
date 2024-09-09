@@ -3,7 +3,9 @@ kind: Service
 metadata:
   namespace: {{ .Release.namespace }}
   name: server
-  labels: {{ include "server.labels" . | nindent 4 }}
+  labels:
+    {{- include "server.labels" . | indent 4 }}
+    {{- include "commonLables" . | indent 4 }}    
 spec:
 {{- if eq .Values.expose.type "loadBalancer" }}
   type: LoadBalancer
@@ -14,6 +16,7 @@ spec:
 {{- end }}
   ports:
     - name: server
-      port: 8445
+      port: {{ template "app.servicePort" . }}
       targetPort: 8443
-  selector: {{ include "server.labels" . | nindent 4 }}  
+  selector:
+    {{- include "server.labels" . | indent 4 }}

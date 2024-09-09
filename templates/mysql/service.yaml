@@ -4,11 +4,13 @@ kind: Service
 metadata:
   namespace: {{ .Release.namespace }}
   name: mysql
-  labels: {{ include "mysql.labels" . | nindent 4 }}
+  labels:
+    {{- include "mysql.labels" . | indent 4 }}
+    {{- include "commonLabels" . | indent 4 }}  
 spec:
   ports:
-    - name: "3306"
+    - name: db
       port: 3306
       targetPort: 3306
   selector:
-    app.kubernetes.io/name: mysql
+    {{- include "mysql.labels" . | indent 4 }}

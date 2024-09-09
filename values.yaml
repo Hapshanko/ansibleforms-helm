@@ -1,46 +1,31 @@
-## TODO add custom CA of trust
-## TODO add ingress
-## TODO add resources requests & limits
-## TODO change server certificates to secret + DB info
-## TODO - add replicas? scalable?
-## TODO think about labels. static?
-## Validation for strings (such as expose.type)
 namespace: ansibleforms
 
 server:
-  image: 
+  image:
+    registry: docker.io
     repository: ansibleguy/ansibleforms
-    tag: 5.0.1
-  labels:
-    app.kubernetes.io/name: server
-    app.kubernetes.io/instance: server
-    app.kubernetes.io/component: server
-    app.kubernetes.io/part-of: ansibleforms
-  port: 8443
+    # quotation marks are vital
+    tag: "5.0.1"
 
 # App must work with a MySQL database
 mysql:
   image:
+    registry: docker.io
     repository: mysql
+    # quotation marks are vital
     tag: "5.7"
-  labels:
-    app.kubernetes.io/name: mysql
-    app.kubernetes.io/instance: mysql
-    app.kubernetes.io/component: database
-    app.kubernetes.io/part-of: ansibleforms
   credentials:
     # Database credentials source. Can be either "plaintext" or "secret"
-    # For both of the sources more configuration is required.
+    # For both of the sources - more configuration is required.
     source: "plaintext"
-    # If credentials source is "plaintext", configure username and password below.
-    db_username: root
+    # If credentials source is "plaintext", configure password below.
     db_password: AnsibleForms!123 
     # If credetials source is "secret", write your secret name below.
-    # Secret *must* have the following keys
-    # 1) db_user - with the DB username
-    # 2) db_password - with mysql password
+    # Secret *must* have the following key
+    # db_password - with mysql password
     secretName: ""
 
+# Configure Ansible Forms to be accessible from outside the kubernetes cluster
 expose:
   # Choose the service type to expose the application. Options are:
   # 1) "ingress" - for external tls access. requires ingress controller
@@ -51,10 +36,11 @@ expose:
   #      method, use it only if all of the other are not available
   # You can read about the differnt services types to match your needs the best
   # https://platform9.com/blog/understanding-kubernetes-loadbalancer-vs-nodeport-vs-ingress/
-  type: ingress
-  loadBalancer: 
-    port:
-  hostname: ansibleforms.apps.ocp410-dev.cloudlet-dev.com
+  type: "ingress"
+  ingress:
+    # Your ingress controller IngressClass name
+    ingressClassName: "nginx"
+    hostname: ansibleforms.example.com
 
 tls:
   # Enable or disable HTTPS to the application. Must be true of false - boolean
@@ -68,7 +54,8 @@ tls:
   # Content must be in pem format
   secretName: ""
   plaintext:
-    # Your certificate data. should be in pem format.
+    # Replace with your certificate data
+    # Should be in pem format.
     certificate: |-
       -----BEGIN CERTIFICATE-----
       MIIGHzCCBAegAwIBAgIUFab+HqxFeUbvAiWbdrkm7Dbf9RYwDQYJKoZIhvcNAQEL
@@ -105,7 +92,7 @@ tls:
       ZtmDrK091HwFaZ0O5pyaLuIQTzSO9cexPbEhhymnpXxq+daNjpcKNH4Frf9Upfpo
       uDgOS4p+C1zQ+bY+EJrFJvlbtXe2y7+jECCFhIsA4FO82AE=
       -----END CERTIFICATE-----
-    # Private key of your certificate (pem format)
+    # Replace with your private key
     privateKey: |- 
       -----BEGIN PRIVATE KEY-----
       MIIJQQIBADANBgkqhkiG9w0BAQEFAASCCSswggknAgEAAoICAQCkK1a7wYDRapEX
@@ -170,6 +157,6 @@ enableDesigner: true
 # Logging level. Options are "error", "warn", "notice", "info" and "debug"
 logLevel: info
 consoleLogLevel: debug
-# # Name of mysql database
+# Name of mysql database
 mysqlDatabase: AnsibleForms
 baseURL: "/"

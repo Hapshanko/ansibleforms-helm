@@ -5,21 +5,22 @@ kind: Ingress
 metadata:
   name: ansibleforms
 spec:
+  ingressClassName: {{ .Values.expose.ingress.ingressClassName }}
 {{- if .Values.tls.enable }}
   tls:
   - hosts:
-      - {{ .Values.expose.hostname | quote }}
-    secretName: server-certificates
+      - {{ Values.expose.ingress.hostname | quote }}
+    secretName: {{ template "certificateSecretName" . }}
 {{- end }}
   rules:
-  - host: {{ .Values.expose.hostname }}
+  - host: {{ .Values.expose.ingress.hostname }}
     http:
       paths:
-      - path: {{ template "baseURL" . }}
+      - path: {{ .Values.baseURL | default "/"}}
         pathType: Prefix
         backend:
           service:
             name: server
             port:
-              number: {{ .Values.server.port }}
-{{- end }}
+              number: {{ template "app.servicePort" . }}
+{{ end }}

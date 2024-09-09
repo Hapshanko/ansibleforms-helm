@@ -5,13 +5,12 @@ metadata:
   namespace: {{ .Release.namespace }}
   name: ansibleforms-env
   labels:
-    app.kubernetes.io/name: ansibleforms-env
-    app.kubernetes.io/component: server
-    app.kubernetes.io/part-of: anssibleforms
+    {{- include "server.labels" . | indent 4 }}
+    {{- include "commonLables" . | indent 4 }}
 data:
   HTTPS: {{ include "enableHTTPS" . | trim | quote }}
   LOG_CONSOLE_LEVEL: {{ .Values.consoleLogLevel | default "debug" }}
   LOG_LEVEL: {{ .Values.logLevel | default "info" }}
   MYSQL_DATABASE: {{ .Values.mysqlDatabase | default "AnsibleForms" }}
   NODE_ENV: {{ .Values.environment | default "production" }}
-  BASE_URL: /
+  BASE_URL: {{ .Values.baseURL | default "/" }}
